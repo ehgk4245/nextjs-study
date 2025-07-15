@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase.js";
+import { BeatLoader } from "react-spinners";
 
 interface Post {
   id: number;
@@ -14,14 +15,24 @@ function Posts() {
   const fetchData = async () => {
     const { data, error } = await supabase.from("posts").select("*");
     setPosts(data || []);
+    setLoading(false);
   };
 
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
   }, []);
-  
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <BeatLoader />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,10 +51,8 @@ function Posts() {
             <h3 className="text-xl font-semibold text-gray-700 mb-2">
               아직 글이 없습니다
             </h3>
-            <p className="text-gray-500 mb-6">
-              첫 번째 글을 작성해보세요!
-            </p>
-            <Link 
+            <p className="text-gray-500 mb-6">첫 번째 글을 작성해보세요!</p>
+            <Link
               href="/posts/new"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 inline-block"
             >
@@ -53,11 +62,7 @@ function Posts() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <Link 
-                href={`/posts/${post.id}`} 
-                key={post.id}
-                className="group"
-              >
+              <Link href={`/posts/${post.id}`} key={post.id} className="group">
                 <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 p-6 h-full">
                   <div className="flex items-start justify-between mb-4">
                     <div className="text-2xl">📄</div>
@@ -65,20 +70,22 @@ function Posts() {
                       ID: {post.id}
                     </span>
                   </div>
-                  
+
                   <h2 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
                     {post.title || "제목 없음"}
                   </h2>
-                  
+
                   {post.body && (
                     <p className="text-gray-600 text-sm line-clamp-3 mb-4">
                       {post.body}
                     </p>
                   )}
-                  
+
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span>📖 읽기</span>
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                    <span className="group-hover:translate-x-1 transition-transform">
+                      →
+                    </span>
                   </div>
                 </div>
               </Link>
@@ -87,7 +94,7 @@ function Posts() {
         )}
 
         <div className="text-center mt-12">
-          <Link 
+          <Link
             href="/posts/new"
             className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200 inline-flex items-center space-x-2"
           >

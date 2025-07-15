@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthProvider";
 
 function PostNew() {
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,33 +14,28 @@ function PostNew() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!title.trim() || !body.trim()) {
       alert("제목과 내용을 모두 입력해주세요.");
       return;
     }
 
     setIsSubmitting(true);
-    
-    try {
-      const { data, error } = await supabase
-        .from("posts")
-        .insert([{ title, body }])
-        .select();
 
-      if (error) {
-        console.error("Error inserting post:", error);
-        alert("글 작성 중 오류가 발생했습니다.");
-      } else {
-        alert("글이 성공적으로 작성되었습니다!");
-        router.push("/posts");
-      }
-    } catch (error) {
-      console.error("Error:", error);
+    const { data, error } = await supabase
+      .from("posts")
+      .insert([{ title, body, user_id: user?.id }])
+      .select();
+
+    if (error) {
+      console.error("Error inserting post:", error);
       alert("글 작성 중 오류가 발생했습니다.");
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      alert("글이 성공적으로 작성되었습니다!");
+      router.push("/posts");
     }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -56,7 +53,10 @@ function PostNew() {
         <div className="bg-white rounded-xl shadow-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 📝 제목
               </label>
               <input
@@ -71,7 +71,10 @@ function PostNew() {
             </div>
 
             <div>
-              <label htmlFor="body" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="body"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 📄 내용
               </label>
               <textarea
@@ -93,7 +96,7 @@ function PostNew() {
               >
                 ← 뒤로 가기
               </button>
-              
+
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -117,7 +120,9 @@ function PostNew() {
 
         <div className="mt-8 text-center">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">💡 작성 팁</h3>
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              💡 작성 팁
+            </h3>
             <ul className="text-blue-800 text-sm space-y-1">
               <li>• 명확하고 구체적인 제목을 사용하세요</li>
               <li>• 독자들이 이해하기 쉽게 작성하세요</li>
