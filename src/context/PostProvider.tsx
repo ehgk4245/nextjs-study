@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "./AuthProvider";
 
 interface PostType {
   id: number;
@@ -30,6 +31,7 @@ interface PostContextType {
 const PostContext = createContext<PostContextType | undefined>(undefined);
 
 export function PostProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const params = useParams();
   const router = useRouter();
   const [post, setPost] = useState<PostType | null>(null);
@@ -86,6 +88,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
           {
             contents: newComment,
             post_id: Number(params.id),
+            user_id: user?.id,
           },
         ])
         .select();
