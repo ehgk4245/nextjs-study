@@ -13,7 +13,7 @@ interface Post {
 
 function Posts() {
   const fetchData = async () => {
-    const { data, error } = await supabase.from("posts").select("*");
+    const { data } = await supabase.from("posts").select("*");
     setPosts(data || []);
     setLoading(false);
   };

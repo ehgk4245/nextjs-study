@@ -22,7 +22,7 @@ function PostNew() {
 
     setIsSubmitting(true);
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("posts")
       .insert([{ title, body, user_id: user?.id }])
       .select();

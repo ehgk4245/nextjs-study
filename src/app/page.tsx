@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -13,18 +15,18 @@ export default function Home() {
         </div>
         
         <div className="flex justify-center space-x-4 mt-8">
-          <a 
+          <Link 
             href="/posts" 
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
           >
             글 목록 보기
-          </a>
-          <a 
+          </Link>
+          <Link 
             href="/posts/new" 
             className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
           >
             새 글 작성
-          </a>
+          </Link>
         </div>
         
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
